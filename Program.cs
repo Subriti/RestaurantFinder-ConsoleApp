@@ -1,7 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using FindClosestRestaurantNearMe;
-using Newtonsoft.Json.Linq;
-using System.Device.Location;
 
 Console.ForegroundColor = ConsoleColor.Cyan;
 Console.WriteLine("\r\n             _____             _                                    _    \r" +
@@ -57,17 +55,19 @@ do
     Console.WriteLine("9: Quit application");
     Console.Write("Your selection: ");
 
+
+    //load the data beforehand
+    GeolocationService.GetCurrentUserLocation();
+
     userSelection = Console.ReadLine();
+
     Console.WriteLine("");
     switch (userSelection)
     {
         case "1":
-            GeolocationService service = new();
-            /* var location= service.GetCurrentUserLocation();
-             Console.WriteLine($"Your location is {location.Latitude}, {location.Longitude}");*/
-            service.GetIPAddress();
-            service.GetLocation();
-            //IPConfig.RunIpConfigCommand();
+            Console.WriteLine($"\nFetching user location...");
+            Console.WriteLine("Your location is "+GeolocationService.location);
+            //GeolocationService.GetCurrentUserLocation();
             break;
         case "2":
             Utilities.GetNearbyRestaurants();

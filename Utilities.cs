@@ -4,8 +4,10 @@
     {
         static List<Restaurants> nearbyRestaurants = new();
 
-        static GeolocationService geolocationService = new ();
-        static RestaurantFinder restaurantFinder = new (geolocationService);
+       /* static GeolocationService geolocationService = new ();
+        static RestaurantFinder restaurantFinder = new (geolocationService);*/
+
+        static RestaurantFinder restaurantFinder = new();
 
         public static void GetNearbyRestaurants()
         {

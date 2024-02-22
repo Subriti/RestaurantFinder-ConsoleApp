@@ -3,12 +3,12 @@ using System.Device.Location;
 
 public class RestaurantFinder
 {
-    private readonly GeolocationService _geolocationService;
+    /*private readonly GeolocationService _geolocationService;
 
     public RestaurantFinder(GeolocationService geolocationService)
     {
         _geolocationService = geolocationService;
-    }
+    }*/
 
     internal List<Restaurants> FindRestaurantsWithinRadius(double radius)
     {
@@ -26,8 +26,9 @@ public class RestaurantFinder
             new Restaurants("Restaurant 3",30.7755,-12.4180)
         };
 
-        //working: get user location (hard coded)
-        var userLocation = _geolocationService.GetCurrentUserLocation();
+        //working: get user location
+        //var userLocation = _geolocationService.GetCurrentUserLocation();
+        var userLocation = GeolocationService.GetCurrentUserLocation();
 
         Console.WriteLine("User Location: "+userLocation);
 
@@ -36,7 +37,7 @@ public class RestaurantFinder
             var restaurantLocation = new GeoCoordinate(restaurant.Latitude, restaurant.Longitude);
             restaurant.Distance = userLocation.GetDistanceTo(restaurantLocation) / 1000; // Convert to kilometers
 
-            Console.WriteLine("Restaurant Location: " + restaurantLocation);
+            Console.WriteLine("\nRestaurant Location: " + restaurantLocation);
             Console.WriteLine($"Distance from Your location to {restaurant.Name} is {restaurant.Distance}\n");
         }
         return restaurants;
