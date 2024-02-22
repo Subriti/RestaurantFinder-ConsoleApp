@@ -1,8 +1,4 @@
-﻿using FreeGeoIPCore;
-using Newtonsoft.Json.Linq;
-using System.Device.Location;
-using System.Diagnostics;
-using System.Net;
+﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace FindClosestRestaurantNearMe
@@ -11,6 +7,7 @@ namespace FindClosestRestaurantNearMe
     {
         public static void RunIpConfigCommand()
         {
+            Console.WriteLine("Accessing your current location...");
             try
             {
                 Process process = new Process
@@ -52,74 +49,23 @@ namespace FindClosestRestaurantNearMe
                 foreach (Match match in matches)
                 {
                     Console.WriteLine(match.Value); //IP get garyo => works till here
+                    
 
+                    //use IP to get location
+                    
+                    /*GeoCoordinate coordinate = new GeoCoordinate();
 
-                    //free geoIP client is outdated
-                    FreeGeoIPClient ipClient = new FreeGeoIPClient();
+                    coordinate.Longitude = 0.0;
+                    coordinate.Latitude = 0.0;
 
-                    try
-                    {
-                        FreeGeoIPCore.Models.Location location = ipClient.GetLocation(match.Value).Result;
-                        Console.WriteLine(location);
-
-                        GeoCoordinate coordinate = new GeoCoordinate();
-
-                        coordinate.Longitude = location.Longitude;
-                        coordinate.Latitude = location.Latitude;
-
-                        Console.WriteLine($"User longitude: {coordinate.Longitude}");
-                        Console.WriteLine($"User longitude: {coordinate.Latitude}");
-                    }
-                    catch
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\nError in FreeGeoIPCode");
-                        Console.ResetColor();
-
-                        //take IP and get location
-                         Console.WriteLine(CityStateCountByIp(match.Value));
-                    }
-
-                    break;
+                    Console.WriteLine($"User longitude: {coordinate.Longitude}");
+                    Console.WriteLine($"User longitude: {coordinate.Latitude}");*/
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        }
-
-        // this doesnot work: API IPStack bc normal private IP is inaccessible hence null: so no need for access key
-        public static string CityStateCountByIp(string IP)
-        {
-            string url = "http://api.ipstack.com/" + IP + "?access_key=XX384X1XX028XX1X66XXX4X04XXXX98X";
-            var request = WebRequest.Create(url);
-
-            using (WebResponse wrs = request.GetResponse())
-            {
-                using (Stream stream = wrs.GetResponseStream())
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        string json = reader.ReadToEnd();
-                        var obj = JObject.Parse(json);
-
-                        //current error: access key is wrong
-                        Console.WriteLine("API STACK ERROR: ");
-                        Console.WriteLine(obj.ToString()); 
-                        
-                        string City = (string)obj["city"];
-                        string Country = (string)obj["region_name"];
-                        string CountryCode = (string)obj["country_code"];
-
-                        return (CountryCode + " - " + Country + "," + City);
-                    }
-                }
-            }
-
-
-            return "";
-
         }
     }
 }

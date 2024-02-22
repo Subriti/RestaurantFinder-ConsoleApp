@@ -13,13 +13,5 @@
             this.Latitude = latitude;
             this.Longitude = longitude;
         }
-
-        public Restaurants(string name, double latitude, double longitude, double distance)
-       {
-        this.Name= name;
-        this.Latitude= latitude;
-        this.Longitude= longitude;
-        this.Distance= distance;
-       }
     }
 }

@@ -1,4 +1,3 @@
-
 using FindClosestRestaurantNearMe;
 using System.Device.Location;
 
@@ -13,7 +12,9 @@ public class RestaurantFinder
 
     internal List<Restaurants> FindRestaurantsWithinRadius(double radius)
     {
-        // Implement logic to find restaurants within the specified radius.
+        Console.WriteLine("Finding all restaurants near you...\n");
+
+        // Implement logic to find restaurants within the specified radius. (currently radius has no use)
         var restaurants = new List<Restaurants>
         {
             new Restaurants("Good Food Tandoori, Kathmandu", 27.6922368,85.3016576),
@@ -33,19 +34,19 @@ public class RestaurantFinder
         foreach (var restaurant in restaurants)
         {
             var restaurantLocation = new GeoCoordinate(restaurant.Latitude, restaurant.Longitude);
-            Console.WriteLine("Restaurant Location: " + restaurantLocation);
             restaurant.Distance = userLocation.GetDistanceTo(restaurantLocation) / 1000; // Convert to kilometers
 
-            Console.WriteLine($"Distance from Your location to {restaurant.Name} is {restaurant.Distance}");
+            Console.WriteLine("Restaurant Location: " + restaurantLocation);
+            Console.WriteLine($"Distance from Your location to {restaurant.Name} is {restaurant.Distance}\n");
         }
-
         return restaurants;
     }
 
     internal Restaurants FindNearestRestaurant(List<Restaurants> restaurants)
     {
+        Console.WriteLine("Finding the closest restaurant for you...");
         // Implement logic to find the nearest restaurant.
-        // currently just sorting the list using LINQ.
+        // sorting the list using LINQ based on distance.
         return restaurants.OrderBy(r => r.Distance).FirstOrDefault();
     }
 }
