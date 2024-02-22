@@ -1,6 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using FindClosestRestaurantNearMe;
+using FreeGeoIPCore;
+using Newtonsoft.Json.Linq;
 using System.Device.Location;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 Console.ForegroundColor = ConsoleColor.Cyan;
 Console.WriteLine("\r\n             _____             _                                    _    \r" +
@@ -61,7 +64,27 @@ do
     switch (userSelection)
     {
         case "1":
-            Utilities.GetUserLocationCoordinates();
+            //Utilities.GetUserLocationCoordinatesAsync();
+            //GetLocationAsync();
+            IPConfig.RunIpConfigCommand();
+            var geolocationService = new GeolocationService();
+            var restaurantFinder = new RestaurantFinder(geolocationService);
+
+            // Find restaurants within 2KM radius
+            List<Restaurants> restaurants = restaurantFinder.FindRestaurantsWithinRadius(2);
+
+            // Find and display the nearest restaurant
+            var nearestRestaurant = restaurantFinder.FindNearestRestaurant(restaurants);
+
+            if (nearestRestaurant != null)
+            {
+                Console.WriteLine($"Nearest Restaurant: {nearestRestaurant.Name}");
+                Console.WriteLine($"Distance: {nearestRestaurant.Distance:F2} KM");
+            }
+            else
+            {
+                Console.WriteLine("No restaurants found within the specified radius.");
+            }
             break;
         case "2":
             Utilities.GetNearbyRestaurants();
@@ -78,6 +101,97 @@ do
 while (userSelection != "9");
 
 Console.WriteLine("Thanks for using the application");
+
+static void Main()
+    {
+       
+    }
+
+async Task<string> GetCachedLocation()
+{
+    try
+    {
+        /* Location location = await Geolocation.Default.GetLastKnownLocationAsync();
+
+         if (location != null)
+             return $"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}";*/
+    }
+    catch (Exception ex)
+    {
+        // Unable to get location
+    }
+
+    return "None";
+}
+
+async Task GetLocationAsync()
+{
+    string city = "Kuleshwor, Kathmandu, Nepal";
+    /* GeoCoordinate coordinates = await GetCoordinates(city);
+
+     Console.WriteLine($"Latitude: {coordinates.Latitude}");
+     Console.WriteLine($"Longitude: {coordinates.Longitude}");
+ */
+
+    using HttpClient client = new();
+    await ProcessRepositoriesAsync(client, city);
+}
+
+static async Task<GeoCoordinate> GetCoordinates(string city)
+{
+    GeoCoordinate coordinates = new GeoCoordinate();
+    string query = $"https://nominatim.openstreetmap.org/search.php?q={city}&format=jsonv2";
+    string result = GetRequest(query);
+    dynamic dynamicResult = JObject.Parse(result);
+    Console.WriteLine(dynamicResult[1]);
+
+    coordinates.Latitude = dynamicResult[0].lat;
+    coordinates.Longitude = dynamicResult[0].lon;
+
+    return coordinates;
+}
+
+
+static async Task ProcessRepositoriesAsync(HttpClient client, String City)
+{
+    var baseURL = $"https://nominatim.openstreetmap.org/search.php?q={City}&format=jsonv2";
+
+    try
+    {
+        Console.WriteLine("\nFetching Data ...");
+
+        var result = await client.GetStringAsync(baseURL);
+        //Console.WriteLine("\n" + result);
+        //memory efficient because strongly typed; compiled before; less chances of error
+        JObject jsonObject = JObject.Parse(result);
+        Console.WriteLine("JsonObject: " + jsonObject);
+        string condition = (string)jsonObject[0]["lat"];
+        string lon = (string)jsonObject[0]["lon"];
+
+        Console.WriteLine("\nCurrent Condition: " + condition + lon + "\n\n");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"\n{ex.Message}");
+    }
+}
+
+static string GetRequest(string url)
+{
+    using (HttpClient client = new HttpClient())
+    {
+        client.DefaultRequestHeaders.Add("User-Agent", @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36");
+
+        HttpResponseMessage response = client.GetAsync(url).Result;
+        response.EnsureSuccessStatusCode();
+
+        using (Stream stream = response.Content.ReadAsStream())
+        using (StreamReader reader = new StreamReader(stream))
+        {
+            return reader.ReadToEnd();
+        }
+    }
+}
 
 
 /*static void GetLocationProperty()

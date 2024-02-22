@@ -1,4 +1,6 @@
-﻿namespace FindClosestRestaurantNearMe
+﻿using NetTopologySuite.Geometries;
+
+namespace FindClosestRestaurantNearMe
 {
     internal class Restaurant
     {
@@ -6,9 +8,16 @@
         public string RestaurantName { get; set;}
 
         //for storing coordinates
-        public GeoCoordinates GeoCoordinates { get; set;}
+        public Point GeoCoordinates { get; set;}
 
         public double Rating { get; set;}
 
+        public Restaurant(int restaurantID, string restaurantName, Point geoCoordinates, double rating)
+        {
+            RestaurantID = restaurantID;
+            RestaurantName = restaurantName;
+            GeoCoordinates = geoCoordinates;
+            Rating = rating;
+        }   
     }
 }

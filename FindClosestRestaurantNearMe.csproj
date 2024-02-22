@@ -8,7 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FreeGeoIPCore" Version="1.0.3" />
+    <PackageReference Include="Geocoding.net" Version="3.6.1" />
+    <PackageReference Include="Geolocation" Version="1.2.1" />
+    <PackageReference Include="Google.Apis.Core" Version="1.66.0" />
+    <PackageReference Include="Google.Maps.Geocoding.NET-API" Version="1.0.0" />
+    <PackageReference Include="IP2Location.IPGeolocation" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Spatial" Version="7.20.0" />
     <PackageReference Include="System.Device.Location.Portable" Version="1.0.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>
