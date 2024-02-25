@@ -8,8 +8,7 @@
 
         public static void GetNearbyRestaurants()
         {
-            // Find restaurants within 2KM radius
-            nearbyRestaurants = restaurantFinder.FindRestaurantsWithinRadius(2);
+            nearbyRestaurants = restaurantFinder.FindRestaurants();
         }
 
         public static void FindClosestRestaurant()
