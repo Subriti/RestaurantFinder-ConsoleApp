@@ -1,24 +1,23 @@
 using Newtonsoft.Json.Linq;
 using System.Device.Location;
+using System.Net.Http.Json;
 
 public static class GeolocationService
 {
     public static string ipAddress = "";
     public static string location = "";
-    public static string address="";
 
     public static async Task<GeoCoordinate> GetCurrentUserLocation()
     {
         if (ipAddress == "" || location == "")
         {
-            var ipAddress = GetIPAddress().Result; // Wait for IP address
+            var ipAddress = GetIPAddress().Result; // Wait for IP address (Blocks the thread until result is available using .Result) try to use response.content.readasstringasync()
             await GetLocationCoordinates(ipAddress); // Continue with location retrieval : await waits until this method executes and only then returns
         }
         // Location already available
         var locAccess = location.Split(',');
         double.TryParse(locAccess[0], out var latitude);
         double.TryParse(locAccess[1], out var longitude);
-        //await getAddressAsync(latitude, longitude);
         return new GeoCoordinate(latitude, longitude); // Vianet main jawalakhel coordinates
     }
 
@@ -66,10 +65,17 @@ public static class GeolocationService
                 HttpResponseMessage response = await client.GetAsync(apiUrl);
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
+                   /* Using JObject
+                    * 
+                    * var content = await response.Content.ReadAsStringAsync();
                     JObject jsonObject = JObject.Parse(content);
-
                     location = (string)jsonObject.GetValue("loc");
+                   */
+                    
+                    //accessing the API response using the model
+                    var ipModel= await response.Content.ReadFromJsonAsync<IPInfoResponse>();
+                    location = ipModel.Loc;
+                    Console.WriteLine(ipModel.City);
                 }
                 else
                 {
@@ -79,37 +85,6 @@ public static class GeolocationService
             catch
             {
                 Console.WriteLine("Error accessing the Location Coordinates API");
-            }
-        }
-    }
-
-    public static async Task getAddressAsync(double lat, double lon)
-    {
-        string apiUrl = $"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}";
-        Console.WriteLine(apiUrl);
-
-        using (HttpClient client = new HttpClient())
-        {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(apiUrl);
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    JObject jsonObject = JObject.Parse(content);
-
-                    address = (string)jsonObject.GetValue("display_name");
-
-                    Console.WriteLine($"Your Address is: {address}\n");
-                }
-                else
-                {
-                    Console.WriteLine($"Error: {response.StatusCode}");
-                }
-            }
-            catch
-            {
-                Console.WriteLine("Error accessing the Address API");
             }
         }
     }
